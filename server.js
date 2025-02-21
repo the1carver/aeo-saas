@@ -2,18 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const bodyParser = require('body-parser');
 
 const authRoutes = require('./routes/auth');
 const billingRoutes = require('./routes/billing');
-const contentRoutes = require('./routes/content');
+const aeoRoutes = require('./routes/aeo');
 
 const app = express();
 
-// Connect Mongo
+// Connect MongoDB
 connectDB();
 
-// Add this before any body parsing middleware
+// Stripe webhook handling
 app.use((req, res, next) => {
   if (req.originalUrl === '/api/billing/webhook') {
     next();
@@ -23,12 +22,11 @@ app.use((req, res, next) => {
 });
 
 app.use(cors());
-app.use(bodyParser.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/billing', billingRoutes);
-app.use('/api/content', contentRoutes);
+app.use('/api/aeo', aeoRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
