@@ -2,6 +2,7 @@ import React from 'react';
 import { ChakraProvider, CSSReset } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import ErrorBoundary from './components/error/ErrorBoundary';
 import PrivateRoute from './components/auth/PrivateRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 
@@ -18,38 +19,40 @@ function App() {
   return (
     <ChakraProvider>
       <CSSReset />
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            {/* Protected Routes */}
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Dashboard />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-            <Route path="/analysis" element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Analysis />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-            <Route path="/billing" element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Billing />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-          </Routes>
-        </Router>
-      </AuthProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              
+              {/* Protected Routes */}
+              <Route path="/dashboard" element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Dashboard />
+                  </DashboardLayout>
+                </PrivateRoute>
+              } />
+              <Route path="/analysis/:projectId?" element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Analysis />
+                  </DashboardLayout>
+                </PrivateRoute>
+              } />
+              <Route path="/billing" element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Billing />
+                  </DashboardLayout>
+                </PrivateRoute>
+              } />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ErrorBoundary>
     </ChakraProvider>
   );
 }
