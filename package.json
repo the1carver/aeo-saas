@@ -2,5 +2,27 @@
   "devDependencies": {
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.9"
+    // package.json (Example structure)
+{
+  "name": "your-app-name",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js", // Command DO uses by default if no Procfile/Run Command set
+    "dev": "nodemon server.js" // Example local development script
+  },
+  "dependencies": {
+    "express": "^4.18.0" // Or your version
+    // ... other PRODUCTION dependencies (mongoose, bcrypt, etc.)
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2", // Keep these here
+    "nodemon": "^3.1.9",     // Keep these here
+    "dotenv": "^16.0.0"       // Keep dotenv here if using the conditional require
+  },
+  "author": "",
+  "license": "ISC"
+}
   }
 }
