@@ -1,24 +1,48 @@
 const mongoose = require('mongoose');
 
-const projectSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  projectName: { type: String, required: true },
-  websiteUrl: { type: String },
-  // Store relevant AEO data, e.g. structured data scans, snippet opportunities
-  contentAnalysis: [
-    {
-      pageUrl: String,
-      snippetSuggestions: String,
-      faqSuggestions: [String],
-      schemaMarkup: String,
-      voiceReadinessScore: Number,
-      // etc...
+const projectSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
-  ],
-}, { timestamps: true });
+    projectName: {
+      type: String,
+      required: [true, 'Please provide a project name'],
+      trim: true,
+    },
+    websiteUrl: {
+      type: String,
+      required: [true, 'Please provide a website URL'],
+      trim: true,
+    },
+    contentAnalysis: [
+      {
+        content: String,
+        analysis: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    faqSuggestions: [
+      {
+        content: String,
+        faqs: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = mongoose.model('Project', projectSchema); 
+const Project = mongoose.model('Project', projectSchema);
+
+module.exports = Project;
