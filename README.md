@@ -41,25 +41,31 @@ git push -u origin main
 ```
 
 # Create new directories
+
 mkdir -p aeo-saas-frontend/src/components/layout
 mkdir -p aeo-saas-frontend/src/components/auth
 mkdir -p aeo-saas-frontend/src/components/project
 mkdir -p aeo-saas-frontend/src/components/aeo
 
 # Move and rename components
+
 mv aeo-saas-frontend/src/components/Navbar.jsx aeo-saas-frontend/src/components/layout/
 mv aeo-saas-frontend/src/components/PrivateRoute.jsx aeo-saas-frontend/src/components/auth/
 
 # Rename service files
+
 mv aeo-saas-frontend/src/services/apiClient.js aeo-saas-frontend/src/services/httpClient.js
 mv aeo-saas-frontend/src/services/api.js aeo-saas-frontend/src/services/aeoService.js
 
 # Rename controllers
+
 mv controllers/contentController.js controllers/aeoController.js
 
 # Create middleware directory if it doesn't exist
+
 mkdir -p middleware
 
 # Create middleware files
+
 mv middleware/authMiddleware.js middleware/auth.js
 mv middleware/subscriptionMiddleware.js middleware/subscription.js

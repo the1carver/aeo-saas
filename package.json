@@ -1,6 +1,12 @@
 {
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.2",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

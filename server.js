@@ -21,7 +21,15 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(cors());
+// Update CORS configuration
+app.use(cors({
+  origin: [
+    'https://frontieraeo.com',
+    'https://app.frontieraeo.com',
+    'http://localhost:3000' // for development
+  ],
+  credentials: true
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);

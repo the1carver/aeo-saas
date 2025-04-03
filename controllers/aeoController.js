@@ -55,13 +55,13 @@ exports.deleteContent = async (req, res) => {
 exports.createProject = async (req, res) => {
   try {
     const { projectName, websiteUrl } = req.body;
-    const newProject = new Project({
+    const project = new Project({
       userId: req.user.userId,
       projectName,
       websiteUrl,
     });
-    await newProject.save();
-    return res.json(newProject);
+    await project.save();
+    return res.status(201).json(project);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -69,20 +69,35 @@ exports.createProject = async (req, res) => {
 
 exports.generateFaqSuggestions = async (req, res) => {
   try {
-    // Example input: content or topic
-    const { content } = req.body;
-    // Call OpenAI to get suggested FAQs
-    const prompt = `Generate 5 frequently asked questions with concise answers for: "${content}". The focus is on capturing how users might query in voice search or direct Q&A.`;
+    const { content, projectId } = req.body;
+    
+    const prompt = `Generate 5 frequently asked questions with concise answers for the following content. Focus on voice search optimization and natural language queries:\n\n${content}`;
     
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: 'You are an expert AEO assistant.' }, 
-                 { role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: 'You are an AEO expert specializing in FAQ generation.' },
+        { role: 'user', content: prompt }
+      ],
       temperature: 0.7,
     });
 
-    const result = response.data.choices[0].message.content;
-    return res.json({ faqSuggestions: result });
+    const faqs = response.data.choices[0].message.content;
+
+    // Update project with new FAQs if projectId provided
+    if (projectId) {
+      await Project.findByIdAndUpdate(projectId, {
+        $push: { 
+          contentAnalysis: {
+            type: 'faq',
+            content: faqs,
+            timestamp: new Date()
+          }
+        }
+      });
+    }
+
+    return res.json({ faqs });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -90,20 +105,39 @@ exports.generateFaqSuggestions = async (req, res) => {
 
 exports.analyzeSnippetPotential = async (req, res) => {
   try {
-    const { urlContent } = req.body; // raw text from a webpage, for example
-    // Here you'd parse the content, extract headings, check for readability, etc.
-    // We'll do a simplified approach using OpenAI to parse snippet suggestions:
-
-    const prompt = `Suggest a short paragraph (40-60 words) that directly answers a potential user question related to the following text, optimized for a Google Featured Snippet:\n\n${urlContent}\n\nFormat the answer clearly.`;
-
+    const { content, projectId } = req.body;
+    
+    const prompt = `Analyze the following content and suggest optimizations for featured snippets. Include:\n
+    1. A concise answer (40-60 words)\n
+    2. Suggested heading structure\n
+    3. Key points to highlight\n
+    4. Voice search optimization tips\n\nContent:\n${content}`;
+    
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: 'You are an AEO optimization expert.' },
-                 { role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: 'You are an AEO expert specializing in featured snippet optimization.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.7,
     });
 
-    const snippetSuggestion = response.data.choices[0].message.content;
-    return res.json({ snippetSuggestion });
+    const analysis = response.data.choices[0].message.content;
+
+    // Update project with new analysis if projectId provided
+    if (projectId) {
+      await Project.findByIdAndUpdate(projectId, {
+        $push: { 
+          contentAnalysis: {
+            type: 'snippet',
+            content: analysis,
+            timestamp: new Date()
+          }
+        }
+      });
+    }
+
+    return res.json({ analysis });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
