@@ -53,7 +53,7 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express();
 
 // Example: Access environment variables (DigitalOcean provides these directly in production)
-const port = process.env.PORT || 3000; // Use PORT from environment or default
+const port = process.env.PORT || 4000; // Use PORT from environment or default
 const mongoUri = process.env.MONGO_URI;
 
 // Example middleware
